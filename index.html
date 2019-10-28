@@ -1,119 +1,51 @@
 <!DOCTYPE html>
 
 <html>
-
 <head>
-  <title>Password Generator</title>
+  <title>Air Quality Map</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin=""/>
   <script src="script.js"></script>
-</head>
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+    integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+    crossorigin=""></script>
+  </head>
 
 <body>
-    <main>
-      <div>
-        <label for="minWordLength">Minimum Word Length</label>
-        <select type="text" id="minWordLength">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-        </select>
-      </div>
-      <div>
-        <label for="maxWordLength">Maximum Word Length</label>
-        <select type="text" id="maxWordLength">
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-        </select>
-      </div>
-      <div>
-        <label for="maxLength">Maximum Character Length</label>
-        <select type="text" id="maxCharLength">
-          <option value="10">10</option>
-          <option value="11">11</option>
-          <option value="12">12</option>
-          <option value="13">13</option>
-          <option value="14">14</option>
-          <option value="15">15</option>
-          <option value="16">16</option>
-          <option value="17">17</option>
-          <option value="18">18</option>
-          <option value="18">19</option>
-          <option value="18">20</option>
-        </select>
-      </div>
-      <br>
-      <div>
-        <input type="checkbox" id="easyTypingName" value="easyTypingValue">Easy Typing <i>(words with double letters preferred)</i>
-      </div>
-      <div>
-        <input type="checkbox" id="numberSubstitutionsName" value="numberSubstitutionsValue">Number Substitutions <i>(O -> 0 ; L -> 1 ; E -> 3)</i>
-      </div>
-      <br>
-      <button id="submitButton" onclick="chooseWords()">Submit</button>
-      <br>
-      <table>
-        <thead>
-        <tr>
-            <th>Password</th>
-            <th>Character Length</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td id="password1"></td>
-            <td id="characterLength1"></td>
-        </tr>
-        <tr>
-            <td id="password2"></td>
-            <td id="characterLength2"></td>
-        </tr>
-        <tr>
-            <td id="password3"></td>
-            <td id="characterLength3"></td>
-        </tr>
-        <tr>
-            <td id="password4"></td>
-            <td id="characterLength4"></td>
-        </tr>
-        <tr>
-            <td id="password5"></td>
-            <td id="characterLength5"></td>
-        </tr>
-        <tr>
-            <td id="password6"></td>
-            <td id="characterLength6"></td>
-        </tr>
-        <tr>
-            <td id="password7"></td>
-            <td id="characterLength7"></td>
-        </tr>
-        <tr>
-            <td id="password8"></td>
-            <td id="characterLength8"></td>
-        </tr>
-        <tr>
-            <td id="password9"></td>
-            <td id="characterLength9"></td>
-        </tr>
-        <tr>
-            <td id="password10"></td>
-            <td id="characterLength10"></td>
-        </tr>
-        </tbody>
-      </table>
-    </main>
-
-    <table id="passwordTable">
-    </table>
-
+  <main>
+    <h1 id="title">Air Quality by Location</h1>
+    <h3 id="title">Right click on an area to see its degree of particle pollution.</h3>
+    <br>
+    <p id="gray">Air Quality data from <a href="https://github.com/openaq/openaq-api/blob/develop/LICENSE.md">OpenAQ</a>.</p>
+    <div id="mapid"></div>
+    <p id="gray"><b>Latitude: </b><span id="currentLatitude">---</span></p>
+    <p id="gray"><b>Longitude: </b><span id="currentLongitude">---</span></p>
+    <br>
+    <p id="output">The nearest reading of particulate pollution to this location is <b><span id="aqreading">---</span> µg/m³</b> (a higher reading means that there are more particulates in the air).</p>
+  </main>
 </body>
+
+<script>
+  // create map and add tiles
+  var map = L.map("mapid").setView([0,0], 1);
+  var attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+  var tiles = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution});
+  tiles.addTo(map);
+
+  // make it update on a mouseclick
+  map.addEventListener("mousemove",function(ev) {
+    lat = ev.latlng.lat;
+    lng = ev.latlng.lng;
+  })
+  var lat, lng;
+  document.getElementById("mapid").addEventListener("contextmenu",function(event) {
+    event.preventDefault();
+    document.getElementById("currentLatitude").innerHTML = lat;
+    document.getElementById("currentLongitude").innerHTML = lng;
+    updateData();
+    return false;
+  })
+</script>
 </html>
